@@ -1,59 +1,69 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import {
+  TabList,
+  Tabs,
+  TabSlot,
+  TabTrigger,
+  TabTriggerSlotProps,
+} from "expo-router/ui";
+import React, { PropsWithChildren } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+const CustomTabBtn = React.forwardRef<
+  View,
+  PropsWithChildren & TabTriggerSlotProps
+>((props, ref) => {
+  return (
+    <Pressable
+      {...props}
+      style={[
+        styles.btn,
+        {
+          backgroundColor: props.isFocused ? "white" : "transparent",
+        },
+      ]}
+    >
+      <Text>{props.children}</Text>
+    </Pressable>
+  );
+});
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+const CustomTabList = () => {
+  return (
+    <View style={styles.custom}>
+      <TabTrigger asChild name={"home"} href={"/(tabs)/home"}>
+        <CustomTabBtn>Tab One</CustomTabBtn>
+      </TabTrigger>
+      <TabTrigger asChild name={"two"} href={"/(tabs)/two"}>
+        <CustomTabBtn>Tab Two</CustomTabBtn>
+      </TabTrigger>
+    </View>
+  );
+};
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="two"
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      />
+    <Tabs>
+      <TabSlot />
+      <CustomTabList />
+      <TabList style={[styles.tabsList]}>
+        <TabTrigger name={"home"} href={"/(tabs)/home"} />
+        <TabTrigger name={"two"} href={"/(tabs)/two"} />
+      </TabList>
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabsList: {},
+  custom: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  btn: {
+    padding: 20,
+    marginBottom: 20,
+    alignContent: "center",
+    justifyContent: "center",
+  },
+});

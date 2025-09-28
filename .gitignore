@@ -19,7 +19,9 @@ expo-env.d.ts
 *.mobileprovision
 
 # Metro
-.metro-health-check*
+.met
+
+.vscode
 
 # debug
 npm-debug.*
